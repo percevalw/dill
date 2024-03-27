@@ -1056,7 +1056,10 @@ def _locate_function(obj, pickler=None):
             pickler and is_dill(pickler, child=False) and pickler._session and module_name == pickler._main.__name__:
         return False
     if hasattr(obj, '__qualname__'):
-        module = _import_module(module_name, safe=True)
+        try:
+            module = __import__(module_name)
+        except ImportError:
+            return False
         try:
             found, _ = _getattribute(module, obj.__qualname__)
             return found is obj
